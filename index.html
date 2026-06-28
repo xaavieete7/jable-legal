@@ -2,10 +2,439 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="refresh" content="0; url=privacy-policy.html" />
-  <title>Jable — Legal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jable — Playas de Fuerteventura</title>
+  <meta name="description" content="Descubre las playas de Fuerteventura. Condiciones en tiempo real, mapa interactivo, pasaporte playero y más de 30 logros desbloqueables." />
+  <meta property="og:title" content="Jable · Playas Fuerteventura" />
+  <meta property="og:description" content="Condiciones en tiempo real, mapa inteligente y pasaporte para coleccionar tus playas favoritas." />
+  <meta property="og:image" content="screenshots/01-mapa.png" />
+
+  <style>
+    :root {
+      --turquoise: #00BCD4;
+      --turquoise-dark: #0097A7;
+      --navy: #1A1A2E;
+      --sand: #FBF3E2;
+      --sand-dark: #EDE3CE;
+      --text: #1A1A2E;
+      --text-muted: #666;
+      --white: #fff;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      color: var(--text);
+      background: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 32px;
+    }
+    .nav-logo { font-size: 22px; font-weight: 800; color: var(--navy); letter-spacing: 0.5px; }
+    .nav-logo span { color: var(--turquoise); }
+    .nav-cta {
+      background: var(--navy); color: #fff;
+      padding: 9px 20px; border-radius: 50px;
+      font-size: 14px; font-weight: 600; text-decoration: none;
+      transition: background 0.2s;
+    }
+    .nav-cta:hover { background: var(--turquoise-dark); }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--turquoise);
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 100px 24px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 70% 30%, rgba(255,255,255,0.15) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 50px;
+      padding: 6px 16px;
+      font-size: 13px; font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(36px, 7vw, 72px);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      max-width: 700px;
+    }
+    .hero h1 em { font-style: normal; text-decoration: underline; text-decoration-color: rgba(255,255,255,0.5); }
+    .hero p {
+      font-size: clamp(16px, 2.5vw, 20px);
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 36px;
+      max-width: 500px;
+      line-height: 1.6;
+    }
+    .hero-buttons { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 56px; }
+    .btn-store {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--navy); color: #fff;
+      padding: 14px 24px; border-radius: 14px;
+      font-size: 15px; font-weight: 600;
+      text-decoration: none; transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    }
+    .btn-store:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+    .btn-store svg { width: 22px; height: 22px; fill: #fff; flex-shrink: 0; }
+    .btn-store small { display: block; font-size: 11px; font-weight: 400; opacity: 0.7; }
+
+    .hero-phones {
+      display: flex; gap: 20px; align-items: flex-end; justify-content: center;
+      flex-wrap: wrap;
+    }
+    .hero-phones img {
+      width: 220px; border-radius: 36px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+      transform: rotate(-3deg);
+      transition: transform 0.3s;
+    }
+    .hero-phones img:nth-child(2) { transform: rotate(0deg) translateY(-20px); }
+    .hero-phones img:nth-child(3) { transform: rotate(3deg); }
+    .hero-phones img:hover { transform: rotate(0deg) translateY(-8px) scale(1.02); }
+
+    /* ── FEATURES ── */
+    .features { padding: 0; }
+
+    .feature {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      min-height: 85vh;
+      gap: 0;
+    }
+    .feature:nth-child(even) { direction: rtl; }
+    .feature:nth-child(even) > * { direction: ltr; }
+
+    .feature-text {
+      padding: clamp(40px, 8vw, 100px) clamp(32px, 6vw, 80px);
+    }
+    .feature-number {
+      font-size: 13px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; margin-bottom: 16px;
+      opacity: 0.5;
+    }
+    .feature h2 {
+      font-size: clamp(28px, 4vw, 46px);
+      font-weight: 800; line-height: 1.15;
+      margin-bottom: 20px;
+    }
+    .feature h2 .accent { color: var(--turquoise); }
+    .feature p {
+      font-size: 17px; color: var(--text-muted);
+      line-height: 1.7; margin-bottom: 28px;
+    }
+    .feature-chips {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .chip {
+      background: var(--sand);
+      border: 1px solid var(--sand-dark);
+      border-radius: 50px;
+      padding: 7px 14px;
+      font-size: 14px; font-weight: 500;
+    }
+
+    .feature-image {
+      height: 85vh; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .feature-image img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+    }
+
+    /* section background colors */
+    .feature-1 { background: var(--white); }
+    .feature-1 .feature-image { background: #00BCD4; }
+
+    .feature-2 { background: var(--sand); }
+    .feature-2 .feature-image { background: #FAD978; }
+
+    .feature-3 { background: var(--white); }
+    .feature-3 .feature-image { background: #1A1A2E; }
+
+    .feature-4 { background: var(--sand); }
+    .feature-4 .feature-image { background: #EDE3CE; }
+
+    .feature-5 { background: var(--navy); }
+    .feature-5 .feature-text { color: #fff; }
+    .feature-5 .feature-number { color: rgba(255,255,255,0.5); opacity: 1; }
+    .feature-5 .feature p { color: rgba(255,255,255,0.7); }
+    .feature-5 .chip { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: #fff; }
+    .feature-5 .feature-image { background: #0f0f1f; }
+
+    /* ── STATS ── */
+    .stats {
+      background: var(--turquoise);
+      padding: 80px 32px;
+      text-align: center;
+    }
+    .stats h2 { font-size: clamp(26px, 4vw, 40px); font-weight: 800; color: #fff; margin-bottom: 16px; }
+    .stats p { font-size: 18px; color: rgba(255,255,255,0.85); margin-bottom: 56px; max-width: 500px; margin-left: auto; margin-right: auto; }
+    .stats-grid {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 32px;
+      max-width: 800px; margin: 0 auto;
+    }
+    .stat-card {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 20px;
+      padding: 32px 40px;
+      min-width: 160px;
+    }
+    .stat-card .num { font-size: 48px; font-weight: 800; color: #fff; line-height: 1; }
+    .stat-card .label { font-size: 14px; color: rgba(255,255,255,0.8); margin-top: 8px; }
+
+    /* ── CTA ── */
+    .cta-section {
+      background: var(--navy);
+      padding: 100px 32px;
+      text-align: center;
+    }
+    .cta-section h2 { font-size: clamp(28px, 5vw, 52px); font-weight: 800; color: #fff; margin-bottom: 16px; }
+    .cta-section p { font-size: 18px; color: rgba(255,255,255,0.65); margin-bottom: 40px; }
+    .cta-section .btn-store { display: inline-flex; margin: 0 auto; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #111;
+      padding: 40px 32px;
+      display: flex; flex-wrap: wrap;
+      align-items: center; justify-content: space-between;
+      gap: 16px;
+    }
+    footer .logo { font-size: 18px; font-weight: 800; color: #fff; }
+    footer .logo span { color: var(--turquoise); }
+    footer nav a {
+      color: rgba(255,255,255,0.5); font-size: 14px;
+      text-decoration: none; margin-left: 24px;
+      transition: color 0.2s;
+    }
+    footer nav a:hover { color: var(--turquoise); }
+    footer p { color: rgba(255,255,255,0.3); font-size: 13px; width: 100%; text-align: center; margin-top: 8px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 12px 20px; }
+      .nav-cta { padding: 8px 16px; font-size: 13px; }
+
+      .feature {
+        grid-template-columns: 1fr;
+        min-height: auto;
+        direction: ltr !important;
+      }
+      .feature-image {
+        height: 70vw; min-height: 300px;
+      }
+      .feature-image img { object-position: center 10%; }
+      .feature-text { padding: 40px 24px; }
+
+      .hero-phones img { width: 150px; }
+      .hero-phones img:nth-child(3) { display: none; }
+
+      footer { flex-direction: column; text-align: center; }
+      footer nav { margin-top: 8px; }
+      footer nav a { margin: 0 12px; }
+    }
+  </style>
 </head>
 <body>
-  <a href="privacy-policy.html">Política de Privacidad</a>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Jable<span>.</span></div>
+  <a href="#download" class="nav-cta">Descargar gratis</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">🌊 Disponible en App Store</div>
+  <h1>Las playas de<br /><em>Fuerteventura</em>,<br />en tu bolsillo.</h1>
+  <p>Condiciones en tiempo real, mapa inteligente y un pasaporte para coleccionar cada rincón de la isla.</p>
+  <div class="hero-buttons">
+    <a href="#download" class="btn-store" id="download">
+      <svg viewBox="0 0 814 1000"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-42.3-155.5-127.4C46.7 790.7 0 663 0 541.8c0-207.8 135.4-317.7 268.5-317.7 99.8 0 183 65.6 244.9 65.6 57.1 0 146.6-69.5 259.4-69.5zM545.3 56.4c-57.3 28-100.1 78.9-118.4 138.5-3.8 13.1-5.7 26.5-5.7 39.8 0 1.4.1 2.8.2 4.2 1.2.1 2.4.2 3.6.2 56.6 0 114.5-38.9 147.3-97.1 17.5-31.1 27.9-67 27.9-102.4 0-2.2-.1-4.4-.2-6.6-19.9 3.3-38.9 11.4-54.7 23.4z"/></svg>
+      <div>
+        <small>Descarga en el</small>
+        App Store
+      </div>
+    </a>
+  </div>
+  <div class="hero-phones">
+    <img src="screenshots/01-mapa.png" alt="Mapa de playas de Fuerteventura" loading="eager" />
+    <img src="screenshots/03-detalle.png" alt="Detalle de playa con condiciones" loading="eager" />
+    <img src="screenshots/04-pasaporte.png" alt="Pasaporte de playas visitadas" loading="eager" />
+  </div>
+</section>
+
+<!-- FEATURE 1 -->
+<section class="feature feature-1">
+  <div class="feature-text">
+    <p class="feature-number">01 — Condiciones</p>
+    <h2>Sabe qué te<br />espera antes<br />de <span class="accent">salir de casa.</span></h2>
+    <p>Consulta el viento, oleaje, temperatura del aire y del agua, índice UV, estado del cielo y bandera reportada para cualquiera de las más de 115 playas de Fuerteventura.</p>
+    <div class="feature-chips">
+      <span class="chip">💨 Viento</span>
+      <span class="chip">🌊 Oleaje</span>
+      <span class="chip">🌡️ Temperatura</span>
+      <span class="chip">☀️ UV</span>
+      <span class="chip">📅 Previsión 7 días</span>
+    </div>
+  </div>
+  <div class="feature-image">
+    <img src="screenshots/01-mapa.png" alt="Mapa de playas con condiciones en tiempo real" />
+  </div>
+</section>
+
+<!-- FEATURE 2 -->
+<section class="feature feature-2">
+  <div class="feature-text">
+    <p class="feature-number">02 — Filtros inteligentes</p>
+    <h2>Filtra las 115 playas<br />y encuentra<br /><span class="accent">tu playa perfecta.</span></h2>
+    <p>Filtra por condiciones en tiempo real, características de la playa o lo que la comunidad ha descubierto. ¿Poco viento y apta para el baño? Un toque y lo tienes.</p>
+    <div class="feature-chips">
+      <span class="chip">🏊 Apta baño</span>
+      <span class="chip">🅿️ Parking</span>
+      <span class="chip">🐕 Perros</span>
+      <span class="chip">🌅 Ve atardecer</span>
+      <span class="chip">♿ Accesible</span>
+    </div>
+  </div>
+  <div class="feature-image">
+    <img src="screenshots/02-lista.png" alt="Lista de playas con filtros" />
+  </div>
+</section>
+
+<!-- FEATURE 3 -->
+<section class="feature feature-3">
+  <div class="feature-text">
+    <p class="feature-number">03 — Detalle de playa</p>
+    <h2>Todo lo que<br />necesitas saber.<br /><span class="accent">En una pantalla.</span></h2>
+    <p>Foto de la playa, condiciones ahora mismo, previsión de 7 días, tipo de acceso, dificultad, servicios y un botón directo para abrir la ruta en Maps.</p>
+    <div class="feature-chips">
+      <span class="chip">🗺️ Cómo llegar</span>
+      <span class="chip">🚿 Servicios</span>
+      <span class="chip">🛣️ Tipo de acceso</span>
+      <span class="chip">⭐ Reseñas</span>
+    </div>
+  </div>
+  <div class="feature-image">
+    <img src="screenshots/03-detalle.png" alt="Detalle de playa con condiciones" />
+  </div>
+</section>
+
+<!-- FEATURE 4 -->
+<section class="feature feature-4">
+  <div class="feature-text">
+    <p class="feature-number">04 — Pasaporte playero</p>
+    <h2>Colecciona<br />cada playa<br /><span class="accent">que visites.</span></h2>
+    <p>Marca las playas como visitadas — en el mapa, por GPS o al escribir una reseña. Sigue tu progreso y mira qué te queda por explorar. ¿Cuántas de las 115 habrás visitado?</p>
+    <div class="feature-chips">
+      <span class="chip">📍 GPS automático</span>
+      <span class="chip">✍️ Reseñas</span>
+      <span class="chip">📊 Progreso visual</span>
+    </div>
+  </div>
+  <div class="feature-image">
+    <img src="screenshots/04-pasaporte.png" alt="Pasaporte de playas visitadas" />
+  </div>
+</section>
+
+<!-- FEATURE 5 -->
+<section class="feature feature-5">
+  <div class="feature-text">
+    <p class="feature-number">05 — Logros</p>
+    <h2>Más de 30 logros<br />que premian<br /><span class="accent">la exploración.</span></h2>
+    <p>Desde tu primera visita hasta completar todo el catálogo. Explorador 4x4, Playa Secreta, Coleccionista, Madrugador... cada aventura tiene su recompensa.</p>
+    <div class="feature-chips">
+      <span class="chip">🏆 30+ logros</span>
+      <span class="chip">🚙 Explorador 4x4</span>
+      <span class="chip">🌅 Madrugador</span>
+      <span class="chip">🗺️ Completista</span>
+    </div>
+  </div>
+  <div class="feature-image">
+    <img src="screenshots/05-logros.png" alt="Pantalla de logros y badges" />
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats">
+  <h2>Fuerteventura entera,<br />en tu mano.</h2>
+  <p>La guía más completa de playas de la isla. Gratis, sin publicidad, sin suscripción.</p>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="num">115</div>
+      <div class="label">Playas catalogadas</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">30+</div>
+      <div class="label">Logros desbloqueables</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">7</div>
+      <div class="label">Días de previsión</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">3</div>
+      <div class="label">Idiomas</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-section" id="download">
+  <h2>Empieza tu pasaporte hoy.</h2>
+  <p>Gratis para iOS. Sin publicidad. Sin suscripción.</p>
+  <a href="#" class="btn-store">
+    <svg viewBox="0 0 814 1000"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-42.3-155.5-127.4C46.7 790.7 0 663 0 541.8c0-207.8 135.4-317.7 268.5-317.7 99.8 0 183 65.6 244.9 65.6 57.1 0 146.6-69.5 259.4-69.5zM545.3 56.4c-57.3 28-100.1 78.9-118.4 138.5-3.8 13.1-5.7 26.5-5.7 39.8 0 1.4.1 2.8.2 4.2 1.2.1 2.4.2 3.6.2 56.6 0 114.5-38.9 147.3-97.1 17.5-31.1 27.9-67 27.9-102.4 0-2.2-.1-4.4-.2-6.6-19.9 3.3-38.9 11.4-54.7 23.4z"/></svg>
+    <div>
+      <small>Descarga en el</small>
+      App Store
+    </div>
+  </a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">Jable<span>.</span></div>
+  <nav>
+    <a href="privacy-policy.html">Política de Privacidad</a>
+    <a href="mailto:xavigrau09@gmail.com">Contacto</a>
+  </nav>
+  <p>&copy; 2025 Jable · Playas de Fuerteventura</p>
+</footer>
+
 </body>
 </html>
